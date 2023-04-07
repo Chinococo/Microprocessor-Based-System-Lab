@@ -1,66 +1,125 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <script src="js/jquery.js"></script>
-    </head>
-    <form onsubmit="logCheckboxStates(event)">
-        <label>
-        <input type="checkbox" name="option1" value="Option 1">
-        Option 1
-        </label>
-        <br>
-        <label>
-        <input type="checkbox" name="option2" value="Option 2">
-        Option 2
-        </label>
-        <br>
-        <label>
-        <input type="checkbox" name="option3" value="Option 3">
-        Option 3
-        </label>
-        <br>
-        <label>
-        <input type="checkbox" name="option4" value="Option 4">
-        Option 4
-        </label>
-        <br>
-        <button type="submit">Submit</button>
-    </form>
-    <!-- Hi Chino -->
-    <input type="text" id="ShineTimes">
-    <button onclick="shineLED()">Shine</button>
-    <script>
-        function logCheckboxStates(event) {
-          event.preventDefault(); // prevent the default form submission behavior
-          const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-          let params = {};
-          checkboxes.forEach(checkbox => {
-            params[checkbox.name]=checkbox.checked;
-            console.log(checkbox.name + ': ' + checkbox.checked);
-          });  
-          console.log(params);
-          $.ajax({
-            url: '/gpio?'+Object.keys(params).map(key => key + '=' + encodeURIComponent(params[key])).join('&'),
-            method: 'GET',
-            success: function(result) {
-              console.log('Result: ', result);
-            }
-          });
-         
-        }
-        function shineLED() {
-            var shineTimes = document.getElementById("ShineTimes").value;
-            let params = {};
-        params['shineTimes'] = shineTimes;
-            $.ajax({
-                url: '/gpio_shine?'+Object.keys(params).map(key => key + '=' + encodeURIComponent(params[key])).join('&'),
-                method: 'GET',
-                success: function(result) {
-                    console.log('Result: ', result);
-                }
-            });
-        }
-    </script>
-</html>
 
+<head>
+    <meta charset="UTF-8">
+    <script src="js/jquery.js"></script>
+    <style>
+        /* style the form */
+
+        form {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+            border-radius: 5px;
+            box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        /* style the checkbox labels */
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 18px;
+            color: #444;
+        }
+
+        /* style the checkboxes */
+
+        input[type="checkbox"] {
+            margin-right: 10px;
+        }
+
+        /* style the submit button */
+
+        button[type="submit"] {
+            display: block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: #fff;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .shine-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .shine-input {
+            padding: 10px;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .shine-button {
+            padding: 10px 20px;
+            font-size: 18px;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+            margin-left: 10px;
+        }
+
+        .shine-button:hover {
+            background-color: #3e8e41;
+        }
+
+        .center {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+    </style>
+</head>
+<label class="center">
+    選擇開啟
+</label>
+<form onsubmit="logCheckboxStates(event)">
+    <label>
+        <input type="checkbox" name="option1" value="Option 1">
+        LED 1
+        </label>
+    <br>
+    <label>
+        <input type="checkbox" name="option2" value="Option 2">
+        LED 2
+        </label>
+    <br>
+    <label>
+        <input type="checkbox" name="option3" value="Option 3">
+        LED 3
+        </label>
+    <br>
+    <label>
+        <input type="checkbox" name="option4" value="Option 4">
+        LED 4
+        </label>
+    <br>
+    <button type="submit">Submit</button>
+</form>
+<br>
+<!-- Hi Chino -->
+<label class="center">
+  閃爍次數
+</label>
+<div class="shine-container">
+
+    <input type="text" id="ShineTimes" class="shine-input">
+    <button onclick="shineLED()" class="shine-button">Shine</button>
+</div>
+
+
+</html>
