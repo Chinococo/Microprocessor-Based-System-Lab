@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html>
-
-<head>
-    <meta charset="UTF-8">
-    <script src="js/jquery.js"></script>
-    <style>
+    <head>
+        <meta charset="UTF-8">
+        <script src="js/jquery.js"></script>
+	<style>
         /* style the form */
 
         form {
@@ -83,43 +82,71 @@
             height: 100%;
         }
     </style>
-</head>
-<label class="center">
-    選擇開啟
-</label>
-<form onsubmit="logCheckboxStates(event)">
-    <label>
+    </head>
+	<!--label class="center">
+    	選擇開啟
+	<label-->
+    <form onsubmit="logCheckboxStates(event)">
+        <label>
         <input type="checkbox" name="option1" value="Option 1">
-        LED 1
+        Option 1
         </label>
-    <br>
-    <label>
+        <br>
+        <label>
         <input type="checkbox" name="option2" value="Option 2">
-        LED 2
+        Option 2
         </label>
-    <br>
-    <label>
+        <br>
+        <label>
         <input type="checkbox" name="option3" value="Option 3">
-        LED 3
+        Option 3
         </label>
-    <br>
-    <label>
+        <br>
+        <label>
         <input type="checkbox" name="option4" value="Option 4">
-        LED 4
+        Option 4
         </label>
+        <br>
+        <button type="submit">Submit</button>
+    </form>
+    <!-- Hi Chino -->
     <br>
-    <button type="submit">Submit</button>
-</form>
-<br>
-<!-- Hi Chino -->
-<label class="center">
-  閃爍次數
-</label>
-<div class="shine-container">
+    <label class="center">
+    	shine times
+    </label>
+    <br>
+    <input type="text" id="ShineTimes">
+    <button onclick="shineLED()">Shine</button>
+    <script>
+        function logCheckboxStates(event) {
+          event.preventDefault(); // prevent the default form submission behavior
+          const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+          let params = {};
+          checkboxes.forEach(checkbox => {
+            params[checkbox.name]=checkbox.checked;
+            console.log(checkbox.name + ': ' + checkbox.checked);
+          });  
+          console.log(params);
+          $.ajax({
+            url: '/gpio?'+Object.keys(params).map(key => key + '=' + encodeURIComponent(params[key])).join('&'),
+            method: 'GET',
+            success: function(result) {
+              console.log('Result: ', result);
+            }
+          });
 
-    <input type="text" id="ShineTimes" class="shine-input">
-    <button onclick="shineLED()" class="shine-button">Shine</button>
-</div>
-
-
+        }
+        function shineLED() {
+            var shineTimes = document.getElementById("ShineTimes").value;
+            let params = {};
+        params['shineTimes'] = shineTimes;
+            $.ajax({
+                url: '/gpio_shine?'+Object.keys(params).map(key => key + '=' + encodeURIComponent(params[key])).join('&'),
+                method: 'GET',
+                success: function(result) {
+                    console.log('Result: ', result);
+                }
+            });
+        }
+    </script>
 </html>
