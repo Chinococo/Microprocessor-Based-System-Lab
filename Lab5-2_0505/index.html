@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <script src="js/jquery.js"></script>
+	</head>
+	<body>
+		<h1 id="title">Nodejs</label>
+		<hr/>
+		<div id="mode-chose">
+ 			<h2>感測器偵測中</h2>
+			</br>
+			<label id="display_value">adc-value=</label>
+			</br>
+			<button onclick="submit_auto()">submit</button>
+			<input type="radio" name="DETECT_AUTO" value="DETECT">DETECT</input>
+			<input type="radio" name="DETECT_AUTO" value="NO_DETECT">NO_DETECT</input>
+		</div>
+		<div id="mode-Control_panel" style="display:none">
+	 		<h2>手動控制面板</h2>
+			<h3>LED Control Panel</h3>
+			
+			<input type="checkbox" name="LED" value="LED1">LED1</input>
+			<input type="checkbox" name="LED" value="LED2">LED2</input>
+			</br>			
+			<button onclick="submit_led_control_panel()">submit</button>
+			<input type="radio" name="enable" value="ON">ON</input>
+			<input type="radio" name="enable" value="OFF">OFF</input>
+			<hr/>
+			</br>
+			<h3>LED Switch Frequency</h3>
+			<input id="shine_count"></input>
+			<br>
+			<button onclick="submit_led_shining()">submit</button>
+			<br>
+			<button onclick="submit_manual_detect()">submit</button>
+			<input type="checkbox" name="DETECT" value="DETECT">DETECT</input>
+			<input type="checkbox" name="DETECT" value="NO_DETECT">NO_DETECT</input>
+
+		</div>
+ 	</body>	
+	<script>
+		function submit_auto(){
+			let radio_button = document.querySelectorAll('input[name="DETECT_AUTO"]')
+			let prams = {};
+			radio_button.forEach(checkbox =>{
+				prams[checkbox.value] = checkbox.checked
+			})
+			console.log(prams);
+			if(prams["NO_DETECT"]==true){
+				$('#mode-chose').hide();
+				$('#mode-Control_panel').show();
+			}else{
+				 get_detect_value();
+
+			}
+				
+		}
+		const get_detect_value = () => {
+			new Promise(function(resolve,reject){
+					$.ajax({
+					url : "./auto_detect",
+					method:"GET",
+					success:function(result){
+						console.log('Result',result);
+						document.getElementById("display_value").innerText = 'adc-value='+result;
+						resolve('sucess');
+						get_detect_value();
+					},
+					error:function(){
+						reject('error');
+					}
+
+				})})	
+		}
+		function submit_led_control_panel(){
+			let prams = {};
+			let radio_button = document.querySelectorAll('input[name="LED"]')
+			
+			radio_button.forEach(checkbox =>{
+				prams[checkbox.value] = checkbox.checked
+			})
+			radio_button = document.querySelectorAll('input[name="enable"]')
+			
+			radio_button.forEach(checkbox =>{
+				prams[checkbox.value] = checkbox.checked
+			})
+			console.log(Object.keys(prams).map(key => key + '=' + encodeURIComponent(prams[key])).join('&'));
+			  $.ajax({
+			    url: '/gpio?'+Object.keys(prams).map(key => key + '=' + encodeURIComponent(prams[key])).join('&'),
+			    method: 'GET',
+			    success: function(result) {
+			      console.log('Result: ', result);
+			    }
+			  });
+				
+		}
+		function submit_led_shining(){
+			let input = document.getElementById("shine_count");
+			console.log(input.value)
+				
+		}
+		function submit_manual_detect(){
+			let radio_button = document.querySelectorAll('input[name="DETECT"]')
+			let prams = {};
+			radio_button.forEach(checkbox =>{
+				prams[checkbox.value] = checkbox.checked
+			})
+			console.log(prams);
+			if(prams["DETECT"]==true){
+				$('#mode-chose').show();
+				$('#mode-Control_panel').hide();
+			}
+					
+		}
+	</script>
+
+
+
+
+	</script>
+	
+	
+</html>
